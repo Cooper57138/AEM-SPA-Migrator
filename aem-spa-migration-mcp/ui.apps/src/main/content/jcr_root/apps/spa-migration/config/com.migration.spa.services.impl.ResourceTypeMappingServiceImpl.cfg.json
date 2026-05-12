@@ -1,0 +1,22 @@
+{
+  "resourceTypeMappings": [
+    "wknd/components/page=wknd-spa/components/page",
+    "wknd/components/container=wknd-spa/components/container",
+    "wknd/components/title=wknd-spa/components/title",
+    "wknd/components/text=wknd-spa/components/text",
+    "wknd/components/image=wknd-spa/components/image",
+    "wknd/components/teaser=wknd-spa/components/teaser",
+    "wknd/components/carousel=wknd-spa/components/carousel",
+    "wknd/components/tabs=wknd-spa/components/tabs",
+    "wknd/components/accordion=wknd-spa/components/accordion",
+    "wknd/components/breadcrumb=wknd-spa/components/breadcrumb",
+    "wknd/components/button=wknd-spa/components/button",
+    "wknd/components/contentfragment=wknd-spa/components/contentfragment",
+    "wknd/components/experiencefragment=wknd-spa/components/experiencefragment",
+    "wknd/components/list=wknd-spa/components/list",
+    "wknd/components/image-list=wknd-spa/components/image-list",
+    "wknd/components/separator=wknd-spa/components/separator",
+    "wknd/components/sharing=wknd-spa/components/sharing",
+    "wknd/components/download=wknd-spa/components/download"
+  ]
+}

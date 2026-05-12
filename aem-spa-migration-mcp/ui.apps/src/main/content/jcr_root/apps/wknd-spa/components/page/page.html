@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html data-sly-use.clientlib="/libs/granite/sightly/templates/clientlib.html"
+      lang="${currentPage.language}">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <sly data-sly-test="${currentPage.title}">
+        <title>${currentPage.title} | WKND</title>
+    </sly>
+    <sly data-sly-test="${!currentPage.title}">
+        <title>WKND</title>
+    </sly>
+
+    <!--/* WKND base styles */-->
+    <sly data-sly-call="${clientlib.css @ categories='wknd.dependencies'}"/>
+    <sly data-sly-call="${clientlib.css @ categories='wknd.base'}"/>
+
+    <!--/* SPA Model JSON endpoint — consumed by the React/Angular SPA framework */-->
+    <link rel="alternate" type="application/json"
+          href="${currentPage.path @ suffix='.model.json'}"/>
+
+    <!--/* SPA app stylesheet */-->
+    <sly data-sly-call="${clientlib.css @ categories='wknd-spa.react'}"/>
+</head>
+<body class="page basicpage ${currentPage.name}">
+
+    <!--/* SPA root mount point */-->
+    <div id="spa-root"
+         class="responsivegrid"
+         data-cmp-is="page"
+         data-sly-resource="${'root' @ resourceType='wcm/foundation/components/responsivegrid'}">
+    </div>
+
+    <!--/* SPA application bundle — React mounts to #spa-root */-->
+    <sly data-sly-call="${clientlib.js @ categories='wknd.dependencies'}"/>
+    <sly data-sly-call="${clientlib.js @ categories='wknd.base'}"/>
+    <sly data-sly-call="${clientlib.js @ categories='wknd-spa.react'}"/>
+</body>
+</html>

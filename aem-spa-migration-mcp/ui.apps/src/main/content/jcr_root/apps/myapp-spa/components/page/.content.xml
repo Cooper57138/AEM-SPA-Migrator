@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jcr:root xmlns:sling="http://sling.apache.org/jcr/sling/1.0"
+          xmlns:cq="http://www.day.com/jcr/cq/1.0"
+          xmlns:jcr="http://www.jcp.org/jcr/1.0"
+          jcr:primaryType="cq:Component"
+          jcr:title="SPA Page"
+          jcr:description="Root page component for SPA-migrated pages. Extends Core WCM page and exposes the Sling Model JSON endpoint for SPA framework consumption."
+          sling:resourceSuperType="core/wcm/components/page/v3/page"
+          componentGroup=".hidden"/>

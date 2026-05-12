@@ -1,0 +1,17 @@
+<footer class="spa-footer cmp-footer" data-cmp-is="footer">
+    <div class="cmp-footer__container">
+        <sly data-sly-test="${properties.copyrightText}">
+            <p class="cmp-footer__copyright">${properties.copyrightText}</p>
+        </sly>
+        <sly data-sly-test="${!properties.copyrightText}">
+            <p class="cmp-footer__copyright">&copy; ${currentPage.title}</p>
+        </sly>
+        <sly data-sly-test="${properties.footerLinks}">
+            <nav class="cmp-footer__nav" aria-label="Footer Navigation">
+                <sly data-sly-list.link="${properties.footerLinks}">
+                    <a href="${link.href @ context='uri'}">${link.text}</a>
+                </sly>
+            </nav>
+        </sly>
+    </div>
+</footer>

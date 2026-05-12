@@ -1,0 +1,31 @@
+<section class="spa-hero cmp-hero" data-cmp-is="hero">
+
+    <sly data-sly-test="${properties.backgroundImage}">
+        <div class="cmp-hero__background-wrapper"
+             style="background-image:url(${properties.backgroundImage @ context='uri'})">
+        </div>
+    </sly>
+
+    <div class="cmp-hero__content">
+        <sly data-sly-test="${properties.headline}">
+            <h1 class="cmp-hero__headline">${properties.headline}</h1>
+        </sly>
+        <sly data-sly-test="${properties.subtitle}">
+            <p class="cmp-hero__subtitle">${properties.subtitle}</p>
+        </sly>
+        <sly data-sly-test="${properties.ctaLink}">
+            <a class="cmp-hero__cta cmp-button" href="${properties.ctaLink @ context='uri'}">
+                <sly data-sly-test="${properties.ctaText}">${properties.ctaText}</sly>
+                <sly data-sly-test="${!properties.ctaText}">Learn More</sly>
+            </a>
+        </sly>
+    </div>
+
+    <sly data-sly-test="${wcmmode.edit}">
+        <sly data-sly-test="${!properties.headline}">
+            <div class="cmp-hero__placeholder">
+                <span>Hero Component — configure headline, subtitle, and CTA in the dialog.</span>
+            </div>
+        </sly>
+    </sly>
+</section>

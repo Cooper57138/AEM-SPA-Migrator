@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html data-sly-use.clientlib="/libs/granite/sightly/templates/clientlib.html">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <sly data-sly-test="${currentPage.title}">
+        <title>${currentPage.title}</title>
+    </sly>
+    <sly data-sly-test="${!currentPage.title}">
+        <title>${currentPage.name}</title>
+    </sly>
+    <sly data-sly-call="${clientlib.css @ categories='myapp-spa.page'}"/>
+    <!--/* Sling Model JSON endpoint for SPA framework */-->
+    <link rel="alternate" type="application/json"
+          href="${currentPage.path @ suffix='.model.json'}"/>
+</head>
+<body class="page basicpage">
+
+    <!--/* SPA root container — the JS framework mounts here */-->
+    <div id="spa-root"
+         class="spa-root"
+         data-cmp-is="page"
+         data-page-path="${currentPage.path}"
+         data-sly-resource="${'par' @ resourceType='wcm/foundation/components/responsivegrid'}">
+    </div>
+
+    <sly data-sly-call="${clientlib.js @ categories='myapp-spa.page'}"/>
+</body>
+</html>

@@ -1,0 +1,33 @@
+<header class="spa-header cmp-header" data-cmp-is="header">
+    <div class="cmp-header__container">
+        <sly data-sly-test="${properties.logoImage}">
+            <sly data-sly-test="${properties.logoLink}">
+                <a class="cmp-header__logo" href="${properties.logoLink @ context='uri'}">
+                    <img src="${properties.logoImage @ context='uri'}" alt="${properties.logoAlt}"/>
+                </a>
+            </sly>
+            <sly data-sly-test="${!properties.logoLink}">
+                <a class="cmp-header__logo" href="${currentPage.path @ suffix='.html', context='uri'}">
+                    <img src="${properties.logoImage @ context='uri'}" alt="${properties.logoAlt}"/>
+                </a>
+            </sly>
+        </sly>
+        <sly data-sly-test="${!properties.logoImage}">
+            <sly data-sly-test="${properties.logoLink}">
+                <a class="cmp-header__logo-text" href="${properties.logoLink @ context='uri'}">
+                    <sly data-sly-test="${properties.logoText}">${properties.logoText}</sly>
+                    <sly data-sly-test="${!properties.logoText}">${currentPage.title}</sly>
+                </a>
+            </sly>
+            <sly data-sly-test="${!properties.logoLink}">
+                <span class="cmp-header__logo-text">
+                    <sly data-sly-test="${properties.logoText}">${properties.logoText}</sly>
+                    <sly data-sly-test="${!properties.logoText}">${currentPage.title}</sly>
+                </span>
+            </sly>
+        </sly>
+        <nav class="cmp-header__nav" aria-label="Main Navigation">
+            <sly data-sly-resource="${'navigation' @ resourceType='core/wcm/components/navigation/v1/navigation'}"/>
+        </nav>
+    </div>
+</header>

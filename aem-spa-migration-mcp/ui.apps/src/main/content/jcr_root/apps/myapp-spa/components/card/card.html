@@ -1,0 +1,29 @@
+<article class="spa-card cmp-card" data-cmp-is="card">
+
+    <sly data-sly-test="${properties.cardImage}">
+        <div class="cmp-card__image">
+            <img src="${properties.cardImage @ context='uri'}" alt="${properties.cardTitle}"/>
+        </div>
+    </sly>
+
+    <div class="cmp-card__body">
+        <sly data-sly-test="${properties.cardTitle}">
+            <h3 class="cmp-card__title">${properties.cardTitle}</h3>
+        </sly>
+        <sly data-sly-test="${properties.cardText}">
+            <p class="cmp-card__text">${properties.cardText}</p>
+        </sly>
+        <sly data-sly-test="${properties.cardLink}">
+            <a class="cmp-card__link cmp-button" href="${properties.cardLink @ context='uri'}">
+                <sly data-sly-test="${properties.cardLinkText}">${properties.cardLinkText}</sly>
+                <sly data-sly-test="${!properties.cardLinkText}">Read More</sly>
+            </a>
+        </sly>
+    </div>
+
+    <sly data-sly-test="${wcmmode.edit}">
+        <sly data-sly-test="${!properties.cardTitle}">
+            <div class="cmp-card__placeholder">Card Component — add title, text, and link in the dialog.</div>
+        </sly>
+    </sly>
+</article>

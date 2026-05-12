@@ -1,0 +1,19 @@
+/*
+ * WKND SPA — React Application Styles
+ *
+ * In a production SPA build (e.g. create-react-app or Vite), the compiled
+ * bundle (main.js / main.css) would be deployed here via the Maven frontend
+ * plugin. This stub ensures the clientlib is valid so AEM does not throw
+ * a 500 when loading the page.
+ *
+ * Replace this file and add a js.txt/app bundle when integrating the
+ * React/Angular SPA project.
+ */
+#spa-root {
+    min-height: 100vh;
+}
+
+/* Authoring overlay helpers */
+.cq-Editable-dom--container {
+    min-height: 80px;
+}

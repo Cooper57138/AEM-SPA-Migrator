@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.migration.spa</groupId>
+        <artifactId>aem-spa-migration-mcp</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+    <artifactId>aem-spa-migration-mcp.ui.apps</artifactId>
+    <packaging>content-package</packaging>
+
+    <name>AEM SPA Migration MCP - UI Apps Package</name>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.migration.spa</groupId>
+            <artifactId>aem-spa-migration-mcp.core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <resources>
+            <resource>
+                <directory>src/main/content</directory>
+                <filtering>false</filtering>
+            </resource>
+        </resources>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.jackrabbit</groupId>
+                <artifactId>filevault-package-maven-plugin</artifactId>
+                <version>1.3.6</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <name>aem-spa-migration-mcp.ui.apps</name>
+                    <group>com.migration.spa</group>
+                    <filterSource>src/main/content/META-INF/vault/filter.xml</filterSource>
+                    <packageType>application</packageType>
+                    <embeddeds>
+                        <embedded>
+                            <groupId>com.migration.spa</groupId>
+                            <artifactId>aem-spa-migration-mcp.core</artifactId>
+                            <target>/apps/spa-migration/install</target>
+                        </embedded>
+                    </embeddeds>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

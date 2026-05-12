@@ -1,0 +1,12 @@
+<section class="spa-cardlist cmp-cardlist" data-cmp-is="cardlist">
+    <sly data-sly-test="${properties.title}">
+        <h2 class="cmp-cardlist__title">${properties.title}</h2>
+    </sly>
+    <div class="cmp-cardlist__grid">
+        <!--/* Render child card nodes */-->
+        <sly data-sly-resource="${'cards' @ resourceType='wcm/foundation/components/responsivegrid'}"/>
+    </div>
+    <sly data-sly-test="${wcmmode.edit}">
+        <p class="cmp-cardlist__hint">Drag Card components into the grid above.</p>
+    </sly>
+</section>
