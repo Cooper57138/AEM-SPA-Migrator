@@ -1,6 +1,25 @@
-# AEM SPA Migration MCP
+# AEM SPA Migrator
 
-An ACS Commons **Managed Controlled Process (MCP)** OSGi bundle that automates the migration of a multimodule AEM Sightly/HTL project to a SPA (Single Page Application) architecture.
+An ACS Commons **Managed Controlled Process (MCP)** OSGi bundle that automates the migration of any AEM HTL/Sightly project to a SPA (Single Page Application) architecture — including multimodule projects — without requiring manual OSGi configuration.
+
+---
+
+## How It Works
+
+The tool auto-detects your project structure from the live JCR tree and executes a 10-step migration pipeline:
+
+| Step | Action | What it does |
+|---|---|---|
+| 1 | Detect Source Project | BFS-walks `/apps` to find all `cq:Component` nodes, identifies the dominant project namespace (e.g. `wknd`), and derives the SPA target namespace (`wknd-spa`) |
+| 2 | Compute Dynamic Mappings | Builds `source → target` resource type mappings from discovered components; merges with any static OSGi config |
+| 3 | Audit Content Tree | Traverses the content path, cataloguing every page and component resource type |
+| 4 | Generate SPA Component Nodes | Creates `cq:Component` proxy nodes under `/apps/{target-namespace}` with `sling:resourceSuperType` pointing to the source component |
+| 5 | Migrate Component Resource Types | Rewrites `sling:resourceType` in all content nodes |
+| 6 | Migrate Template Structure Nodes | Rewrites `sling:resourceType` in `/conf` editable template structure nodes |
+| 7 | Migrate Template Policy Nodes | Rewrites `sling:resourceType` in `/conf` policy nodes |
+| 8 | Scan Sling Models | Reports models missing `@Exporter` (required for the `model.json` SPA endpoint) |
+| 9 | Generate SPA Component Stubs | Optionally creates stub nodes for resource types that have no mapping |
+| 10 | Produce Migration Report | Persists a full report to `/var/spa-migration/reports/{timestamp}` |
 
 ---
 
@@ -43,67 +62,98 @@ mvn clean install -PautoInstallPackage \
 
 ---
 
-## Running the MCP Process
+## Running the Migration
 
 1. Log in to AEM and navigate to:
    **Tools → ACS Commons → Manage Controlled Processes**
 
-2. Click **"Start Process"** and select **"SPA Migration Process"** from the list.
+2. Click **Start Process** and select **SPA Migration Process**.
 
 3. Fill in the form fields:
 
    | Field | Default | Description |
    |---|---|---|
-   | Content Root Path | `/content` | JCR path to scan for pages and components |
-   | Apps Root Path | `/apps` | Path for template and Sling Model scanning |
-   | Dry Run | `true` | Report only — no JCR writes |
-   | Migrate Templates | `true` | Enable SPA flag on editable templates |
-   | Migrate Dialogs | `true` | Process Touch UI dialogs |
-   | Migrate Sling Models | `true` | Flag models missing `@Exporter` |
-   | Generate SPA Stubs | `false` | Create React stub JSON descriptors |
-   | Resource Type Mapping Config | _(empty)_ | Custom OSGi config path (optional) |
+   | Content Root Path | `/content` | Pages and components to scan and migrate |
+   | Apps Root Path | `/apps` | Component definitions to scan. Use `/apps/{module}` (e.g. `/apps/wknd`) to target a single module in a multimodule project |
+   | Conf Root Path | `/conf` | Editable templates and policies to migrate. Use `/conf/{site}` (e.g. `/conf/wknd`) to scope to a single site |
+   | Source App Namespace | _(auto)_ | Leave blank to auto-detect from `/apps`; or supply manually (e.g. `wknd`) |
+   | Target App Namespace | _(auto)_ | Leave blank to auto-derive as `{source}-spa`; or supply manually (e.g. `wknd-spa`) |
+   | Dry Run | `true` | Log planned changes without writing to JCR |
+   | Auto-Generate SPA Components | `true` | Create `cq:Component` proxy nodes under the target namespace |
+   | Generate Dynamic Mappings | `true` | Auto-compute mappings from `/apps` (no OSGi config needed) |
+   | Migrate Templates | `true` | Rewrite `sling:resourceType` in template structure and policy nodes |
+   | Migrate Sling Models | `true` | Report models missing `@Exporter` |
+   | Generate SPA Stubs | `false` | Create stub nodes for unmapped resource types |
 
-4. Click **"Start"** to begin. The MCP dashboard shows real-time progress for each of the six pipeline steps:
-   - **Audit Content Tree** — traverses pages and components
-   - **Migrate Component Resource Types** — rewrites `sling:resourceType` values
-   - **Migrate Editable Templates** — sets `spa:enabled = true`
-   - **Scan Sling Models** — detects models missing `@Exporter`
-   - **Generate SPA Component Stubs** — writes stub JSON descriptor nodes
-   - **Produce Migration Report** — persists the final report to JCR
-
-5. Download the report from:
-   ```
-   /var/spa-migration/reports/{timestamp}
-   ```
-   Or browse it in CRXDE Lite / the JCR explorer.
+4. Run with **Dry Run = true** first to preview what will change, then re-run with **Dry Run = false** to apply.
 
 ---
 
-## Configuration
+## Multimodule Projects
 
-### Custom Resource Type Mappings
+For a project with multiple modules under `/apps` (e.g. `wknd`, `wknd-common`, `wknd-mobile`), scope each run to one module at a time:
 
-Edit the OSGi configuration file at:
+| Field | Single-module run | All modules |
+|---|---|---|
+| Apps Root Path | `/apps/wknd` | `/apps` |
+| Conf Root Path | `/conf/wknd` | `/conf` |
+| Content Root Path | `/content/wknd` | `/content` |
+
+When `Apps Root Path` points directly at a module (e.g. `/apps/wknd`), the namespace is auto-detected from the components found there and the target namespace is derived automatically (`wknd-spa`).
+
+---
+
+## Migration Report
+
+After each run, a report node is written to:
+
+```
+/var/spa-migration/reports/{timestamp}
+```
+
+It contains:
+
+| Property | Description |
+|---|---|
+| `report:status` | `DRY_RUN` or `COMPLETE` |
+| `sourceAppNamespace` | Detected or supplied source namespace |
+| `targetAppNamespace` | Derived or supplied target namespace |
+| `totalPages` | Pages scanned |
+| `totalComponents` | Component nodes scanned |
+| `migratedComponents` | `sling:resourceType` rewrites in content |
+| `generatedComponents` | `cq:Component` nodes created |
+| `rewrittenTemplateNodes` | Template structure nodes rewritten |
+| `rewrittenPolicyNodes` | Policy nodes rewritten |
+| `totalMappings` | Total active mappings used |
+| `detectionConfidence` | `HIGH`, `MEDIUM`, or `LOW` |
+| `appliedMappings/` | Child nodes listing every `source → target` mapping |
+| `modelsNeedingExporter/` | Sling Models that need `@Exporter` |
+
+Browse the report in CRXDE Lite or read it via the JCR API.
+
+---
+
+## Custom Resource Type Mappings
+
+The tool auto-computes mappings at runtime. You can also supply static overrides via OSGi config — static mappings always win over dynamic ones.
+
+Edit the config file at:
+
 ```
 ui.apps/src/main/content/jcr_root/apps/spa-migration/config/
   com.migration.spa.services.impl.ResourceTypeMappingServiceImpl.cfg.json
 ```
 
-Add entries in `source=target` format:
-
 ```json
 {
   "resourceTypeMappings": [
     "myapp/components/hero=myapp-spa/components/hero",
-    "myapp/components/card=myapp-spa/components/card",
-    "myapp/components/richtext=core/wcm/components/text/v2/text"
+    "myapp/components/card=myapp-spa/components/card"
   ]
 }
 ```
 
-Custom mappings **override** the built-in default Foundation → Core Component mappings.
-
-### Built-in Default Mappings
+### Built-in Default Mappings (Foundation → Core Components)
 
 | Source | Target |
 |---|---|
@@ -120,42 +170,17 @@ Custom mappings **override** the built-in default Foundation → Core Component 
 
 ---
 
-## Extending the Bundle
-
-### Adding New Content Type Detectors
-
-1. Create a new implementation of `ContentTypeMigrationService`:
-
-```java
-@Component(service = ContentTypeMigrationService.class)
-public class MyCustomContentTypeMigrationServiceImpl implements ContentTypeMigrationService {
-    // Override detection logic
-}
-```
-
-2. Reference it from `SPAMigrationProcess` or use it standalone in a custom MCP step.
-
-### Adding New Resource Type Mappings at Runtime
-
-You can deploy additional `.cfg.json` files targeting `ResourceTypeMappingServiceImpl`
-in different run-mode config folders (e.g. `config.author`) to apply environment-specific mappings.
-
----
-
 ## Post-Migration Checklist
 
-After running the process with `dryRun = false`:
+After running with **Dry Run = false**:
 
-- [ ] Review `/var/spa-migration/reports/{timestamp}` for migrated component count and any errors
-- [ ] Verify migrated pages render correctly in the AEM editor and preview
-- [ ] Fix Sling Models listed in `modelsNeedingExporter` by adding `@Exporter(name = "jackson", extensions = "json")` and `@ExporterOptions(selectors = "model")`
-- [ ] Update HTL/Sightly templates to use SPA-compatible markup where required
-- [ ] Verify editable templates have correct `allowedComponents` policies for new resource types
-- [ ] Run regression tests on all migrated page templates
-- [ ] Remove or update custom dialog definitions that no longer match new component structures
-- [ ] Validate Content Fragments and Experience Fragments are accessible via the SPA JSON API
-- [ ] Configure the AEM SPA Editor (if using the WYSIWYG SPA editor approach) with correct routing
-- [ ] Re-run with `dryRun = true` on production-like content to estimate scope before going live
+- [ ] Review the report at `/var/spa-migration/reports/{timestamp}`
+- [ ] Verify migrated pages render in AEM editor and preview
+- [ ] Fix Sling Models listed in `modelsNeedingExporter` — add `@Exporter(name="jackson", extensions="json")` and `@ExporterOptions(selectors="model")`
+- [ ] Confirm editable templates have correct `allowedComponents` policies for new resource types
+- [ ] Update HTL templates where SPA-compatible markup is needed
+- [ ] Validate Content Fragments and Experience Fragments are accessible via the JSON API
+- [ ] Run regression tests across all migrated page templates
 
 ---
 
@@ -163,16 +188,24 @@ After running the process with `dryRun = false`:
 
 ```
 aem-spa-migration-mcp/
-├── pom.xml                              # Parent POM
-├── core/                                # OSGi bundle (Java)
+├── pom.xml                                  # Parent POM
+├── core/                                    # OSGi bundle (Java)
 │   └── src/main/java/com/migration/spa/
-│       ├── mcp/                         # MCP process classes
-│       ├── services/                    # Service interfaces + impls
-│       └── config/                      # OSGi config interfaces
-├── ui.apps/                             # AEM content package
-│   └── src/main/content/jcr_root/
-│       └── apps/spa-migration/
-│           ├── config/                  # OSGi .cfg.json files
-│           └── components/             # Component placeholders
-└── all/                                 # Container package
+│       ├── mcp/
+│       │   ├── SPAMigrationProcess.java      # 10-step MCP process
+│       │   └── SPAMigrationProcessFactory.java
+│       └── services/
+│           ├── ProjectDetectionService.java  # Namespace auto-detection
+│           ├── SPAComponentGeneratorService.java  # cq:Component node creation
+│           ├── ComponentMigrationService.java
+│           ├── TemplateMigrationService.java
+│           ├── ResourceTypeMappingService.java
+│           ├── SlingModelScannerService.java
+│           └── impl/                        # OSGi service implementations
+├── ui.apps/                                 # AEM content package
+│   └── src/main/content/jcr_root/apps/
+│       ├── spa-migration/config/            # OSGi .cfg.json files
+│       ├── myapp-spa/                       # Example SPA component set
+│       └── wknd-spa/                        # WKND SPA component set
+└── all/                                     # Container package
 ```
