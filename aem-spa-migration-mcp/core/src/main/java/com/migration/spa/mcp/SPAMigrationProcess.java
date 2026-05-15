@@ -5,7 +5,6 @@ import com.adobe.acs.commons.mcp.ProcessDefinition;
 import com.adobe.acs.commons.mcp.ProcessInstance;
 import com.adobe.acs.commons.mcp.form.CheckboxComponent;
 import com.adobe.acs.commons.mcp.form.FormField;
-import com.adobe.acs.commons.mcp.form.PathfieldComponent;
 import com.adobe.acs.commons.mcp.form.TextfieldComponent;
 import com.migration.spa.services.ComponentMigrationService;
 import com.migration.spa.services.ContentTypeMigrationService;
@@ -68,7 +67,7 @@ public class SPAMigrationProcess extends ProcessDefinition {
             name = "Content Root Path",
             description = "JCR path to scan and migrate (e.g. /content/wknd or /content/mysite)",
             required = true,
-            component = PathfieldComponent.class,
+            component = TextfieldComponent.class,
             options = {"default=/content"}
     )
     public String contentRootPath = "/content";
@@ -79,7 +78,7 @@ public class SPAMigrationProcess extends ProcessDefinition {
                     + "Use /apps to scan all modules, or /apps/{module} (e.g. /apps/wknd) "
                     + "to target a specific module in a multimodule project.",
             required = true,
-            component = PathfieldComponent.class,
+            component = TextfieldComponent.class,
             options = {"default=/apps"}
     )
     public String appsRootPath = "/apps";
@@ -90,7 +89,7 @@ public class SPAMigrationProcess extends ProcessDefinition {
                     + "Use /conf/{site} (e.g. /conf/wknd) to scope template and policy "
                     + "migration to a single site in a multimodule project.",
             required = false,
-            component = PathfieldComponent.class,
+            component = TextfieldComponent.class,
             options = {"default=/conf"}
     )
     public String confRootPath = "/conf";

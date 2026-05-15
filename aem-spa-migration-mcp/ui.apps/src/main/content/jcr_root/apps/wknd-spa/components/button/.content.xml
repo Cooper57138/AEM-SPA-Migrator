@@ -5,4 +5,4 @@
           jcr:primaryType="cq:Component"
           jcr:title="WKND SPA Button"
           sling:resourceSuperType="wknd/components/button"
-          componentGroup="WKND SPA"/>
+          componentGroup="WKND.Content"/>

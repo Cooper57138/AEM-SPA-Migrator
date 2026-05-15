@@ -1,0 +1,13 @@
+<!--/* wknd-spa/components/page/customheaderlibs.html
+     Included by Core WCM page/v3 at the end of <head>.
+     Loads the AEM SPA Editor page-model messaging bridge in author/preview mode only.
+     In publish mode this file produces no output.
+*/-->
+<sly data-sly-use.clientlib="/libs/granite/sightly/templates/clientlib.html">
+    <sly data-sly-test="${wcmmode.edit || wcmmode.preview}">
+        <!--/* SPA Editor: page-model↔editor iframe messaging */-->
+        <sly data-sly-call="${clientlib.js @ categories='cq.authoring.pagemodel.messaging'}"/>
+        <!--/* SPA Editor: core author overlay styles */-->
+        <sly data-sly-call="${clientlib.css @ categories='cq.authoring.editor.sites.page'}"/>
+    </sly>
+</sly>

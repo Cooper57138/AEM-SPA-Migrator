@@ -5,4 +5,5 @@
           jcr:primaryType="cq:Component"
           jcr:title="WKND SPA Tabs"
           sling:resourceSuperType="wknd/components/tabs"
-          componentGroup="WKND SPA"/>
+          cq:isContainer="{Boolean}true"
+          componentGroup="WKND.Content"/>

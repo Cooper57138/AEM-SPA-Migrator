@@ -5,4 +5,4 @@
           jcr:primaryType="cq:Component"
           jcr:title="WKND SPA Experience Fragment"
           sling:resourceSuperType="wknd/components/experiencefragment"
-          componentGroup="WKND SPA"/>
+          componentGroup="WKND.Content"/>

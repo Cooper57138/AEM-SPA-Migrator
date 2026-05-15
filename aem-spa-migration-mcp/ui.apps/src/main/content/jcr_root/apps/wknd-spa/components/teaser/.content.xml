@@ -5,4 +5,5 @@
           jcr:primaryType="cq:Component"
           jcr:title="WKND SPA Teaser"
           sling:resourceSuperType="wknd/components/teaser"
-          componentGroup="WKND SPA"/>
+          imageDelegate="wknd-spa/components/image"
+          componentGroup="WKND.Content"/>

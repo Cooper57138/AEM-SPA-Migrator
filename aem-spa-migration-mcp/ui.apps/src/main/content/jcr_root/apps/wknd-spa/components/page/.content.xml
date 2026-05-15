@@ -4,6 +4,7 @@
           xmlns:jcr="http://www.jcp.org/jcr/1.0"
           jcr:primaryType="cq:Component"
           jcr:title="WKND SPA Page"
-          jcr:description="SPA-enabled page component for WKND. Bootstraps the React SPA and exposes the Sling Model JSON endpoint."
+          jcr:description="SPA-enabled page component for WKND. Inherits full WKND rendering and enables the AEM SPA Editor messaging bridge in author mode."
           sling:resourceSuperType="wknd/components/page"
+          cq:isContainer="{Boolean}true"
           componentGroup=".hidden"/>
